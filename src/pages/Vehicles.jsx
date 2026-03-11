@@ -84,109 +84,117 @@ const Vehicles = () => {
   const getStatusColor = (status) => {
     switch(status) {
       case 'Ativo':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
       case 'Em Manutenção':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-amber-50 text-amber-600 border border-amber-100';
       default:
-        return 'bg-red-100 text-red-800';
+        return 'bg-rose-50 text-rose-600 border border-rose-100';
     }
   };
 
+  const handleTrack = (placa) => {
+    setToast({ message: `Iniciando rastreamento em tempo real do veículo ${placa}...`, type: 'success' });
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Veículos</h2>
-          <p className="text-gray-600 mt-1">Gerencie toda a frota de veículos ({filteredVehicles.length})</p>
+          <h2 className="text-4xl font-black text-gray-900 tracking-tight">Veículos</h2>
+          <p className="text-gray-500 mt-2 font-medium flex items-center gap-2">
+            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+            Gerenciamento total da frota ({filteredVehicles.length} veículos)
+          </p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors font-semibold"
+          className="px-6 py-3 bg-blue-600 rounded-2xl text-sm font-black text-white hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center gap-2 group"
         >
-          <Plus size={20} />
-          Adicionar Veículo
+          <Plus size={20} className="transition-transform group-hover:rotate-90 duration-300" />
+          ADICIONAR VEÍCULO
         </button>
       </div>
 
-      {/* Filtros e Busca */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search size={18} className="absolute left-3 top-3 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar por placa ou modelo..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            />
+      {/* Filtros e Busca Modernos */}
+      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-center hover:shadow-xl transition-all duration-500">
+        <div className="flex-1 w-full relative group">
+          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+          <input
+            type="text"
+            placeholder="Buscar por placa ou modelo..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-medium placeholder:text-gray-400"
+          />
+        </div>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="p-3 bg-gray-50 rounded-xl text-gray-400">
+            <Filter size={20} />
           </div>
-          <div className="flex items-center gap-2">
-            <Filter size={18} className="text-gray-600" />
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            >
-              <option>Todos</option>
-              <option>Ativo</option>
-              <option>Em Manutenção</option>
-              <option>Inativo</option>
-            </select>
-          </div>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="flex-1 md:w-48 px-4 py-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700 appearance-none cursor-pointer"
+          >
+            <option>Todos os Status</option>
+            <option>Ativo</option>
+            <option>Em Manutenção</option>
+            <option>Inativo</option>
+          </select>
         </div>
       </div>
 
-      {/* Grid de Veículos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Grid de Veículos Modernizado */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredVehicles.map((vehicle) => (
-          <div key={vehicle.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-4">
-              <div className="bg-blue-100 p-3 rounded-lg">
-                <Truck className="text-blue-600" size={24} />
-              </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(vehicle.status)}`}>
+          <div key={vehicle.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 group relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-6">
+              <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${getStatusColor(vehicle.status)}`}>
                 {vehicle.status}
               </span>
             </div>
+
+            <div className="mb-8">
+              <div className="bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                <Truck className="text-blue-600" size={32} />
+              </div>
+              <p className="text-[11px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">Identificação</p>
+              <h3 className="text-3xl font-black text-gray-900 tracking-tighter">{vehicle.placa}</h3>
+            </div>
             
-            <div className="mb-4">
-              <p className="text-xs text-gray-600 font-semibold uppercase tracking-wider">Placa</p>
-              <p className="text-xl font-bold text-gray-900">{vehicle.placa}</p>
-            </div>
-
-            <div className="space-y-2 mb-4">
-              <div>
-                <p className="text-xs text-gray-600">Modelo</p>
-                <p className="text-sm font-semibold text-gray-900">{vehicle.modelo}</p>
+            <div className="grid grid-cols-2 gap-6 mb-8">
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Modelo</p>
+                <p className="text-sm font-black text-gray-700 truncate">{vehicle.modelo}</p>
               </div>
-              <div>
-                <p className="text-xs text-gray-600">Ano</p>
-                <p className="text-sm font-semibold text-gray-900">{vehicle.year}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-600">Quilometragem</p>
-                <p className="text-sm font-semibold text-gray-900">{vehicle.km.toLocaleString()} km</p>
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Km Atual</p>
+                <p className="text-sm font-black text-gray-700">{vehicle.km.toLocaleString()} km</p>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-4 border-t border-gray-100">
-              <button className="flex-1 flex items-center justify-center gap-2 p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-semibold">
-                <MapPin size={16} />
+            <div className="flex items-center gap-3 pt-6 border-t border-gray-50">
+              <button 
+                onClick={() => handleTrack(vehicle.placa)}
+                className="flex-1 bg-gray-900 text-white px-4 py-3 rounded-2xl text-xs font-black tracking-widest uppercase hover:bg-blue-600 transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-lg shadow-gray-200"
+              >
+                <MapPin size={14} className="group-hover/btn:animate-bounce" />
                 Rastrear
               </button>
-              <button
-                onClick={() => handleOpenModal(vehicle)}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit2 size={16} />
-              </button>
-              <button
-                onClick={() => handleDelete(vehicle.id)}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <Trash2 size={16} />
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleOpenModal(vehicle)}
+                  className="p-3 bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                >
+                  <Edit2 size={18} />
+                </button>
+                <button
+                  onClick={() => handleDelete(vehicle.id)}
+                  className="p-3 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
             </div>
           </div>
         ))}

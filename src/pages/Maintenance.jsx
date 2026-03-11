@@ -86,119 +86,122 @@ const Maintenance = () => {
   const getPriorityColor = (priority) => {
     switch(priority) {
       case 'Alta':
-        return 'bg-red-100 text-red-800';
+        return 'bg-rose-50 text-rose-600 border border-rose-100';
       case 'Média':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-50 text-amber-600 border border-amber-100';
       default:
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
     }
   };
 
   const getStatusColor = (status) => {
     switch(status) {
       case 'Pendente':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-orange-50 text-orange-600 border border-orange-100';
       case 'Agendada':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-50 text-blue-600 border border-blue-100';
       default:
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Manutenção</h2>
-          <p className="text-gray-600 mt-1">Programar e acompanhar manutenções ({filteredMaintenances.length})</p>
+          <h2 className="text-4xl font-black text-gray-900 tracking-tight">Manutenção</h2>
+          <p className="text-gray-500 mt-2 font-medium flex items-center gap-2">
+            <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+            Programar e acompanhar manutenções ({filteredMaintenances.length} registros)
+          </p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors font-semibold"
+          className="px-6 py-3 bg-blue-600 rounded-2xl text-sm font-black text-white hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center gap-2 group"
         >
-          <Plus size={20} />
-          Agendar Manutenção
+          <Plus size={20} className="transition-transform group-hover:rotate-90 duration-300" />
+          AGENDAR MANUTENÇÃO
         </button>
       </div>
 
-      {/* Busca e Filtro */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search size={18} className="absolute left-3 top-3 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar por serviço ou veículo..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            />
-          </div>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          >
-            <option>Todos</option>
-            <option>Pendente</option>
-            <option>Agendada</option>
-            <option>Concluída</option>
-          </select>
+      {/* Busca e Filtro Modernos */}
+      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-center hover:shadow-xl transition-all duration-500">
+        <div className="flex-1 w-full relative group">
+          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+          <input
+            type="text"
+            placeholder="Buscar por serviço ou veículo..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-medium placeholder:text-gray-400"
+          />
         </div>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="w-full md:w-56 px-4 py-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700 cursor-pointer"
+        >
+          <option>Todos os Status</option>
+          <option>Pendente</option>
+          <option>Agendada</option>
+          <option>Concluída</option>
+        </select>
       </div>
 
-      {/* Lista de Manutenções */}
-      <div className="space-y-4">
+      {/* Lista de Manutenções Modernizada */}
+      <div className="grid grid-cols-1 gap-6">
         {filteredMaintenances.map((maintenance) => (
-          <div key={maintenance.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-start gap-4">
-                <div className="bg-orange-100 p-3 rounded-lg">
-                  <Wrench className="text-orange-600" size={24} />
+          <div key={maintenance.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50 transition-all duration-500 group relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+              <div className="flex items-center gap-6">
+                <div className="bg-orange-50 w-20 h-20 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                  <Wrench className="text-orange-600" size={32} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">{maintenance.servico}</h3>
-                  <p className="text-sm text-gray-600 mt-1">Veículo: <span className="font-semibold">{maintenance.veiculo}</span></p>
+                  <h3 className="text-2xl font-black text-gray-900">{maintenance.servico}</h3>
+                  <div className="flex items-center gap-3 mt-1.5">
+                    <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded">VEÍCULO</span>
+                    <p className="text-sm font-bold text-gray-700">{maintenance.veiculo}</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getPriorityColor(maintenance.prioridade)}`}>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${getPriorityColor(maintenance.prioridade)}`}>
                   Prioridade {maintenance.prioridade}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(maintenance.status)}`}>
+                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${getStatusColor(maintenance.status)}`}>
                   {maintenance.status}
                 </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4 pt-4 border-t border-gray-100">
-              <div>
-                <p className="text-xs text-gray-600 font-medium">Data Agendada</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Calendar size={16} className="text-gray-400" />
-                  <p className="text-sm font-semibold text-gray-900">{maintenance.data}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8 pt-8 border-t border-gray-50">
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Data Agendada</p>
+                <div className="flex items-center gap-2 text-sm font-black text-gray-700">
+                  <Calendar size={16} className="text-blue-500" />
+                  {maintenance.data}
                 </div>
               </div>
-              <div>
-                <p className="text-xs text-gray-600 font-medium">Custo Estimado</p>
-                <p className="text-sm font-semibold text-gray-900 mt-1">{maintenance.custo}</p>
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Custo Estimado</p>
+                <p className="text-sm font-black text-gray-900">{maintenance.custo}</p>
               </div>
-              <div>
-                <p className="text-xs text-gray-600 font-medium">Ações</p>
-                <div className="flex gap-2 mt-1">
-                  <button
-                    onClick={() => handleOpenModal(maintenance)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    <Edit2 size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(maintenance.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
+              <div className="md:col-span-2 flex items-center justify-end gap-3">
+                <button
+                  onClick={() => handleOpenModal(maintenance)}
+                  className="flex-1 md:flex-none px-6 py-3 bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest"
+                >
+                  <Edit2 size={16} />
+                  Editar
+                </button>
+                <button
+                  onClick={() => handleDelete(maintenance.id)}
+                  className="p-3 bg-gray-50 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
             </div>
           </div>

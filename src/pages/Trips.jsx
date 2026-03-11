@@ -73,95 +73,104 @@ const Trips = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Viagens</h2>
-          <p className="text-gray-600 mt-1">Histórico e rastreamento de viagens ({filteredTrips.length})</p>
+          <h2 className="text-4xl font-black text-gray-900 tracking-tight">Viagens</h2>
+          <p className="text-gray-500 mt-2 font-medium flex items-center gap-2">
+            <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+            Histórico e rastreamento de operações ({filteredTrips.length} registros)
+          </p>
         </div>
         <button
           onClick={handleOpenModal}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors font-semibold"
+          className="px-6 py-3 bg-blue-600 rounded-2xl text-sm font-black text-white hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center gap-2 group"
         >
-          <Plus size={20} />
-          Registrar Viagem
+          <Plus size={20} className="transition-transform group-hover:rotate-90 duration-300" />
+          REGISTRAR VIAGEM
         </button>
       </div>
 
-      {/* Busca */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-        <div className="relative">
-          <Search size={18} className="absolute left-3 top-3 text-gray-400" />
+      {/* Busca Moderna */}
+      <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500">
+        <div className="relative group">
+          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
           <input
             type="text"
             placeholder="Buscar motorista, veículo, origem ou destino..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            className="w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-medium placeholder:text-gray-400"
           />
         </div>
       </div>
 
-      {/* Tabela de Viagens */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      {/* Tabela de Viagens Premium */}
+      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Motorista</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Veículo</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Origem</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Destino</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Distância</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Combustível</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-700">Data</th>
-                <th className="text-center py-4 px-6 text-sm font-semibold text-gray-700">Ações</th>
+              <tr className="bg-gray-50/50 border-b border-gray-100">
+                <th className="py-6 px-8 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Motorista / Veículo</th>
+                <th className="py-6 px-8 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Trajeto</th>
+                <th className="py-6 px-8 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Distância / Consumo</th>
+                <th className="py-6 px-8 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Data</th>
+                <th className="py-6 px-8 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Ações</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-50">
               {filteredTrips.map((trip) => (
-                <tr key={trip.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="py-4 px-6">
-                    <p className="text-sm font-semibold text-gray-900">{trip.motorista}</p>
-                  </td>
-                  <td className="py-4 px-6">
-                    <p className="text-sm text-gray-700">{trip.veiculo}</p>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <MapPin size={14} className="text-blue-600" />
-                      {trip.origem}
+                <tr key={trip.id} className="hover:bg-blue-50/30 transition-colors group">
+                  <td className="py-6 px-8">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-black group-hover:scale-110 transition-transform">
+                        {trip.motorista.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-gray-900">{trip.motorista}</p>
+                        <p className="text-[11px] font-bold text-gray-400 uppercase mt-0.5">{trip.veiculo}</p>
+                      </div>
                     </div>
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <MapPin size={14} className="text-red-600" />
-                      {trip.destino}
+                  <td className="py-6 px-8">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                        {trip.origem}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                        {trip.destino}
+                      </div>
                     </div>
                   </td>
-                  <td className="py-4 px-6">
-                    <span className="text-sm font-semibold text-gray-900 bg-blue-50 px-3 py-1 rounded-lg inline-block">
-                      {trip.km}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                      <Fuel size={14} className="text-yellow-600" />
-                      {trip.combustivel}
+                  <td className="py-6 px-8">
+                    <div className="flex items-center gap-6">
+                      <div className="space-y-1">
+                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">KM</p>
+                        <p className="text-sm font-black text-gray-900 bg-gray-50 px-3 py-1 rounded-lg inline-block">{trip.km}</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">COMBUSTÍVEL</p>
+                        <div className="flex items-center gap-1.5 text-sm font-black text-amber-600">
+                          <Fuel size={14} />
+                          {trip.combustivel}
+                        </div>
+                      </div>
                     </div>
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
-                      <Calendar size={14} className="text-gray-400" />
+                  <td className="py-6 px-8">
+                    <div className="flex items-center gap-2 text-xs font-black text-gray-500">
+                      <Calendar size={14} className="text-blue-500" />
                       {trip.data}
                     </div>
                   </td>
-                  <td className="py-4 px-6 text-center">
+                  <td className="py-6 px-8 text-center">
                     <button
                       onClick={() => handleDelete(trip.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex"
+                      className="p-3 text-gray-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={18} />
                     </button>
                   </td>
                 </tr>
