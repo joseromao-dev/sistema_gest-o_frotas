@@ -3,110 +3,226 @@ import { createContext, useContext, useState, useCallback } from 'react';
 const FleetContext = createContext();
 
 export const FleetProvider = ({ children }) => {
-  const [vehicles, setVehicles] = useState([
-    { id: 1, placa: 'LD-34-RT', modelo: 'Toyota Hilux', status: 'Ativo', year: 2022, km: 15420 },
-    { id: 2, placa: 'AC-21-LG', modelo: 'Mercedes Sprinter', status: 'Em Manutenção', year: 2021, km: 32150 },
-    { id: 3, placa: 'BT-09-MD', modelo: 'Nissan Navara', status: 'Ativo', year: 2023, km: 8750 },
-    { id: 4, placa: 'LC-15-KH', modelo: 'Volkswagen Crafter', status: 'Ativo', year: 2022, km: 22300 },
-    { id: 5, placa: 'MC-08-FG', modelo: 'Scania Truck', status: 'Ativo', year: 2020, km: 45670 },
+  // School Data
+  const [students, setStudents] = useState([
+    { id: 1, studentId: 'AL-101', name: 'Pedro Gomes', class: '10A', year: '2026', status: 'Ativo', guardian: 'Marta Gomes' },
+    { id: 2, studentId: 'AL-102', name: 'Sara Lima', class: '11B', year: '2026', status: 'Ativo', guardian: 'João Lima' },
+    { id: 3, studentId: 'AL-103', name: 'Tiago Santos', class: '9C', year: '2026', status: 'Ativo', guardian: 'Ana Santos' },
+    { id: 4, studentId: 'AL-104', name: 'Rita Fernandes', class: '12A', year: '2026', status: 'Ativo', guardian: 'Paulo Fernandes' },
   ]);
 
-  const [drivers, setDrivers] = useState([
-    { id: 1, nome: 'Carlos Mendes', status: 'Disponível', licenseNumber: 'PG123456', validUntil: '2025-12-31' },
-    { id: 2, nome: 'João Pereira', status: 'Em Viagem', licenseNumber: 'PG789012', validUntil: '2026-05-15' },
-    { id: 3, nome: 'Ana Silva', status: 'Disponível', licenseNumber: 'PG345678', validUntil: '2025-08-20' },
-    { id: 4, nome: 'Mário Costa', status: 'Indisponível', licenseNumber: 'PG901234', validUntil: '2024-11-10' },
-    { id: 5, nome: 'Rosa Santos', status: 'Disponível', licenseNumber: 'PG567890', validUntil: '2026-03-05' },
+  const [teachers, setTeachers] = useState([
+    { id: 1, name: 'Ana Costa', subject: 'Matemática', status: 'Ativo', classes: ['10A', '11B'], email: 'ana.costa@edugest.com', phone: '+244 923 123 456' },
+    { id: 2, name: 'Bruno Silva', subject: 'Física', status: 'Ativo', classes: ['12A', '10B'], email: 'bruno.silva@edugest.com', phone: '+244 923 987 654' },
+    { id: 3, name: 'Clara Nascimento', subject: 'Língua Portuguesa', status: 'Ativo', classes: ['9C', '11A'], email: 'clara.nascimento@edugest.com', phone: '+244 923 456 789' },
   ]);
 
-  const [maintenances, setMaintenances] = useState([
-    { id: 1, servico: 'Troca de Óleo', veiculo: 'LD-34-RT', data: '10/03/2024', prioridade: 'Alta', custo: 'Kz 45,000', status: 'Pendente' },
-    { id: 2, servico: 'Alinhamento', veiculo: 'AC-21-LG', data: '15/05/2024', prioridade: 'Média', custo: 'Kz 32,000', status: 'Pendente' },
-    { id: 3, servico: 'Revisão Completa', veiculo: 'BT-09-MD', data: '20/04/2024', prioridade: 'Alta', custo: 'Kz 120,000', status: 'Agendada' },
+  const [users, setUsers] = useState([
+    { id: 1, name: 'Alice Silva', email: 'alice@example.com', role: 'Admin', status: 'Ativo' },
+    { id: 2, name: 'Bob Oliveira', email: 'bob@example.com', role: 'Editor', status: 'Ativo' },
+    { id: 3, name: 'Carol Santos', email: 'carol@example.com', role: 'User', status: 'Inativo' },
+    { id: 4, name: 'David Costa', email: 'david@example.com', role: 'User', status: 'Ativo' },
   ]);
 
-  const [trips, setTrips] = useState([
-    { id: 1, motorista: 'João Pereira', veiculo: 'Mercedes Sprinter', origem: 'Centro Luanda', destino: 'Viana', km: '22 km', data: '09/03/2024', combustivel: '15 L' },
-    { id: 2, motorista: 'Carlos Mendes', veiculo: 'Toyota Hilux', origem: 'Talatona', destino: 'Cazenga', km: '18 km', data: '09/03/2024', combustivel: '12 L' },
-    { id: 3, motorista: 'Ana Silva', veiculo: 'Nissan Navara', origem: 'Benguela', destino: 'Lobito', km: '45 km', data: '08/03/2024', combustivel: '28 L' },
+  const [enrollments, setEnrollments] = useState([
+    { id: 1, studentId: 1, course: 'Ciências', className: '10A', status: 'Confirmada', date: '02/04/2026', confirmationNote: 'Matrícula concluída com sucesso.' },
+    { id: 2, studentId: 2, course: 'História', className: '11B', status: 'Confirmada', date: '03/04/2026', confirmationNote: 'Dados verificados e matrícula aprovada.' },
+    { id: 3, studentId: 3, course: 'Inglês', className: '9C', status: 'Pendente', date: '05/04/2026', confirmationNote: 'Em análise pela secretaria.' },
   ]);
 
-  // Veículos
+  const [grades, setGrades] = useState([
+    { id: 1, studentId: 1, subject: 'Matemática', score: 16.5, average: 15.2, comment: 'Excelente desempenho geral.' },
+    { id: 2, studentId: 2, subject: 'História', score: 14.0, average: 13.8, comment: 'Bom progresso na avaliação.' },
+    { id: 3, studentId: 3, subject: 'Inglês', score: 12.5, average: 13.0, comment: 'Necessita revisão em gramática.' },
+    { id: 4, studentId: 4, subject: 'Biologia', score: 17.0, average: 16.4, comment: 'Participação ativa em aula.' },
+  ]);
+
+  const [payments, setPayments] = useState([
+    { id: 1, studentId: 1, amount: 75000, dueDate: '10/04/2026', status: 'Pago', method: 'Transferência' },
+    { id: 2, studentId: 2, amount: 75000, dueDate: '12/04/2026', status: 'Pendente', method: 'MB Way' },
+    { id: 3, studentId: 3, amount: 75000, dueDate: '08/04/2026', status: 'Pago', method: 'Multicaixa' },
+  ]);
+
+  const [schedule, setSchedule] = useState([
+    { id: 1, day: 'Segunda', time: '08:00 - 09:30', subject: 'Matemática', className: '10A', teacher: 'Ana Costa', room: 'Sala 101' },
+    { id: 2, day: 'Segunda', time: '09:45 - 11:15', subject: 'História', className: '11B', teacher: 'Bruno Silva', room: 'Sala 204' },
+    { id: 3, day: 'Segunda', time: '11:30 - 13:00', subject: 'Biologia', className: '12A', teacher: 'Clara Nascimento', room: 'Sala 109' },
+    { id: 4, day: 'Terça', time: '08:00 - 09:30', subject: 'Inglês', className: '9C', teacher: 'Clara Nascimento', room: 'Sala 103' },
+    { id: 5, day: 'Quarta', time: '10:00 - 11:30', subject: 'Física', className: '12A', teacher: 'Bruno Silva', room: 'Sala 205' },
+  ]);
+
+  // Fleet Data
+  const [vehicles, setVehicles] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [maintenances, setMaintenances] = useState([]);
+  const [trips, setTrips] = useState([]);
+
+  // School Actions
+  const addStudent = useCallback((student) => {
+    const newStudent = { ...student, id: Math.max(...students.map((item) => item.id), 0) + 1 };
+    setStudents([newStudent, ...students]);
+    return newStudent;
+  }, [students]);
+
+  const updateStudent = useCallback((id, updates) => {
+    setStudents(students.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+  }, [students]);
+
+  const deleteStudent = useCallback((id) => {
+    setStudents(students.filter((item) => item.id !== id));
+  }, [students]);
+
+  const addTeacher = useCallback((teacher) => {
+    const newTeacher = { ...teacher, id: Math.max(...teachers.map((item) => item.id), 0) + 1 };
+    setTeachers([newTeacher, ...teachers]);
+    return newTeacher;
+  }, [teachers]);
+
+  const updateTeacher = useCallback((id, updates) => {
+    setTeachers(teachers.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+  }, [teachers]);
+
+  const deleteTeacher = useCallback((id) => {
+    setTeachers(teachers.filter((item) => item.id !== id));
+  }, [teachers]);
+
+  const addUser = useCallback((user) => {
+    const newUser = { ...user, id: Math.max(...users.map((item) => item.id), 0) + 1 };
+    setUsers([newUser, ...users]);
+    return newUser;
+  }, [users]);
+
+  const updateUser = useCallback((id, updates) => {
+    setUsers(users.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+  }, [users]);
+
+  const deleteUser = useCallback((id) => {
+    setUsers(users.filter((item) => item.id !== id));
+  }, [users]);
+
+  const addEnrollment = useCallback((enrollment) => {
+    const newEnrollment = { ...enrollment, id: Math.max(...enrollments.map((item) => item.id), 0) + 1 };
+    setEnrollments([newEnrollment, ...enrollments]);
+    return newEnrollment;
+  }, [enrollments]);
+
+  const updateEnrollment = useCallback((id, updates) => {
+    setEnrollments(enrollments.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+  }, [enrollments]);
+
+  const deleteEnrollment = useCallback((id) => {
+    setEnrollments(enrollments.filter((item) => item.id !== id));
+  }, [enrollments]);
+
+  const addPayment = useCallback((payment) => {
+    const newPayment = { ...payment, id: Math.max(...payments.map((item) => item.id), 0) + 1 };
+    setPayments([newPayment, ...payments]);
+    return newPayment;
+  }, [payments]);
+
+  const updatePayment = useCallback((id, updates) => {
+    setPayments(payments.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+  }, [payments]);
+
+  const deletePayment = useCallback((id) => {
+    setPayments(payments.filter((item) => item.id !== id));
+  }, [payments]);
+
+  // Fleet Actions
   const addVehicle = useCallback((vehicle) => {
-    const newVehicle = {
-      ...vehicle,
-      id: Math.max(...vehicles.map(v => v.id), 0) + 1
-    };
+    const newVehicle = { ...vehicle, id: Math.max(...vehicles.map((item) => item.id), 0) + 1 };
     setVehicles([newVehicle, ...vehicles]);
     return newVehicle;
   }, [vehicles]);
 
   const updateVehicle = useCallback((id, updates) => {
-    setVehicles(vehicles.map(v => v.id === id ? { ...v, ...updates } : v));
+    setVehicles(vehicles.map((item) => (item.id === id ? { ...item, ...updates } : item)));
   }, [vehicles]);
 
   const deleteVehicle = useCallback((id) => {
-    setVehicles(vehicles.filter(v => v.id !== id));
+    setVehicles(vehicles.filter((item) => item.id !== id));
   }, [vehicles]);
 
-  // Motoristas
   const addDriver = useCallback((driver) => {
-    const newDriver = {
-      ...driver,
-      id: Math.max(...drivers.map(d => d.id), 0) + 1
-    };
+    const newDriver = { ...driver, id: Math.max(...drivers.map((item) => item.id), 0) + 1 };
     setDrivers([newDriver, ...drivers]);
     return newDriver;
   }, [drivers]);
 
   const updateDriver = useCallback((id, updates) => {
-    setDrivers(drivers.map(d => d.id === id ? { ...d, ...updates } : d));
+    setDrivers(drivers.map((item) => (item.id === id ? { ...item, ...updates } : item)));
   }, [drivers]);
 
   const deleteDriver = useCallback((id) => {
-    setDrivers(drivers.filter(d => d.id !== id));
+    setDrivers(drivers.filter((item) => item.id !== id));
   }, [drivers]);
 
-  // Manutenções
   const addMaintenance = useCallback((maintenance) => {
-    const newMaintenance = {
-      ...maintenance,
-      id: Math.max(...maintenances.map(m => m.id), 0) + 1,
-      status: 'Pendente'
-    };
+    const newMaintenance = { ...maintenance, id: Math.max(...maintenances.map((item) => item.id), 0) + 1 };
     setMaintenances([newMaintenance, ...maintenances]);
     return newMaintenance;
   }, [maintenances]);
 
   const updateMaintenance = useCallback((id, updates) => {
-    setMaintenances(maintenances.map(m => m.id === id ? { ...m, ...updates } : m));
+    setMaintenances(maintenances.map((item) => (item.id === id ? { ...item, ...updates } : item)));
   }, [maintenances]);
 
   const deleteMaintenance = useCallback((id) => {
-    setMaintenances(maintenances.filter(m => m.id !== id));
+    setMaintenances(maintenances.filter((item) => item.id !== id));
   }, [maintenances]);
 
-  // Viagens
   const addTrip = useCallback((trip) => {
-    const newTrip = {
-      ...trip,
-      id: Math.max(...trips.map(t => t.id), 0) + 1
-    };
+    const newTrip = { ...trip, id: Math.max(...trips.map((item) => item.id), 0) + 1 };
     setTrips([newTrip, ...trips]);
     return newTrip;
   }, [trips]);
 
   const deleteTrip = useCallback((id) => {
-    setTrips(trips.filter(t => t.id !== id));
+    setTrips(trips.filter((item) => item.id !== id));
   }, [trips]);
 
   return (
-    <FleetContext.Provider value={{
-      vehicles, addVehicle, updateVehicle, deleteVehicle,
-      drivers, addDriver, updateDriver, deleteDriver,
-      maintenances, addMaintenance, updateMaintenance, deleteMaintenance,
-      trips, addTrip, deleteTrip
-    }}>
+    <FleetContext.Provider
+      value={{
+        students,
+        teachers,
+        users,
+        enrollments,
+        grades,
+        payments,
+        schedule,
+        vehicles,
+        drivers,
+        maintenances,
+        trips,
+        addStudent,
+        updateStudent,
+        deleteStudent,
+        addTeacher,
+        updateTeacher,
+        deleteTeacher,
+        addEnrollment,
+        updateEnrollment,
+        deleteEnrollment,
+        addPayment,
+        updatePayment,
+        deletePayment,
+        addUser,
+        updateUser,
+        deleteUser,
+        addVehicle,
+        updateVehicle,
+        deleteVehicle,
+        addDriver,
+        updateDriver,
+        deleteDriver,
+        addMaintenance,
+        updateMaintenance,
+        deleteMaintenance,
+        addTrip,
+        deleteTrip,
+      }}
+    >
       {children}
     </FleetContext.Provider>
   );

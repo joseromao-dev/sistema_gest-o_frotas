@@ -1,23 +1,26 @@
 const StatCard = ({ label, value, icon, color }) => {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300 transform hover:-translate-y-1 group">
-      <div className="flex items-center justify-between mb-5">
-        <div className={`p-3 rounded-xl ${color} ring-4 ring-opacity-10 ${color.replace('bg-', 'ring-')} transition-transform group-hover:scale-110 duration-300`}>
+    <div className="bg-white p-7 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 transform hover:-translate-y-2 group relative overflow-hidden">
+      <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-slate-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-3xl"></div>
+      
+      <div className="flex items-center justify-between mb-8 relative z-10">
+        <div className={`p-4 rounded-2xl ${color} shadow-lg ${color.replace('bg-', 'shadow-').replace('50', '100')} transition-all duration-500 group-hover:rotate-6 group-hover:scale-110`}>
           {icon}
         </div>
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 shadow-inner group-hover:bg-white transition-colors">
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span className="text-[10px] font-bold uppercase tracking-wider">Ao Vivo</span>
+          <span className="text-[9px] font-black uppercase tracking-[0.15em] text-slate-500">Actualizado</span>
         </div>
       </div>
-      <div>
-        <p className="text-sm font-semibold text-gray-500 tracking-wide uppercase">{label}</p>
-        <div className="flex items-baseline gap-2 mt-1">
-          <h3 className="text-3xl font-extrabold text-gray-900 tracking-tight">{value}</h3>
-          <span className="text-xs font-medium text-gray-400">Total</span>
+
+      <div className="relative z-10">
+        <p className="text-[11px] font-black text-slate-400 tracking-[0.2em] uppercase mb-1">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-4xl font-black text-slate-900 tracking-tighter transition-all duration-500 group-hover:text-blue-600 group-hover:scale-105 origin-left">{value}</h3>
+          <div className="h-1.5 w-1.5 rounded-full bg-blue-500 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
         </div>
       </div>
     </div>

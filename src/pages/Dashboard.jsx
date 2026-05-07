@@ -1,299 +1,202 @@
-import { Truck, Users, AlertCircle, Fuel, Plus } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Users, BookOpen, FilePlus, DollarSign, CalendarDays, FileText, GraduationCap, ClipboardCheck, Settings, ChevronRight, TrendingUp, ArrowUpRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { useFleet } from '../context/FleetContext';
-import StatCard from '../components/StatCard';
-import VehiclesList from '../components/VehiclesList';
-import DriversList from '../components/DriversList';
-import MaintenancePanel from '../components/MaintenancePanel';
-import FuelPanel from '../components/FuelPanel';
-import RecentTripsTable from '../components/RecentTripsTable';
-import MapTracker from '../components/MapTracker';
-import Modal from '../components/Modal';
-import Toast from '../components/Toast';
+import { BarChart, Bar, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LineChart, Line, ComposedChart } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { SectionHeader } from '../components/ui/section-header';
 
 const Dashboard = () => {
-  const { vehicles, drivers, maintenances, trips, addTrip } = useFleet();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [toast, setToast] = useState(null);
-  const [formData, setFormData] = useState({
-    motorista: '',
-    veiculo: '',
-    origem: '',
-    destino: '',
-    km: '',
-    combustivel: '',
-    data: new Date().toISOString().split('T')[0]
-  });
+  const { user } = useAuth();
+  const { students, teachers, enrollments, payments, schedule, grades } = useFleet();
 
-  const handleDownloadReport = () => {
-    setToast({ message: 'Relatório gerado e baixado com sucesso!', type: 'success' });
-  };
+  const pendingPayments = payments.filter((payment) => payment.status === 'Pendente').length;
 
-  const handleOpenModal = () => {
-    setFormData({
-      motorista: '',
-      veiculo: '',
-      origem: '',
-      destino: '',
-      km: '',
-      combustivel: '',
-      data: new Date().toISOString().split('T')[0]
-    });
-    setIsModalOpen(true);
-  };
+  const stats = [
+    { label: 'Total de Alunos', value: students.length, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100', trend: '+5.2%' },
+    { label: 'Total de Professores', value: teachers.length, icon: GraduationCap, color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100', trend: '+2.1%' },
+    { label: 'Novas Matrículas', value: enrollments.length, icon: FilePlus, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100', trend: '+12.5%' },
+    { label: 'Pagamentos Pendentes', value: pendingPayments, icon: DollarSign, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100', trend: '-3.4%' },
+  ];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.motorista.trim() || !formData.veiculo.trim() || !formData.origem.trim() ||
-        !formData.destino.trim() || !formData.km.trim() || !formData.combustivel.trim()) {
-      setToast({ message: 'Por favor, preencha todos os campos', type: 'error' });
-      return;
-    }
-    addTrip(formData);
-    setToast({ message: 'Viagem registrada com sucesso!', type: 'success' });
-    setIsModalOpen(false);
-  };
-
-  // Calcular estatísticas dinamicamente
-  const stats = useMemo(() => {
-    const activeVehicles = vehicles.filter(v => v.status === 'Ativo').length;
-    const activeDrivers = drivers.filter(d => d.status === 'Disponível').length;
-    const pendingMaintenance = maintenances.filter(m => m.status === 'Pendente').length;
-
-    return [
-      { 
-        label: 'Veículos na Frota', 
-        value: vehicles.length.toString(), 
-        icon: <Truck size={24} className="text-blue-600" />, 
-        color: 'bg-blue-50' 
-      },
-      { 
-        label: 'Motoristas Online', 
-        value: activeDrivers.toString(), 
-        icon: <Users size={24} className="text-emerald-600" />, 
-        color: 'bg-emerald-50' 
-      },
-      { 
-        label: 'Manutenções em Dia', 
-        value: pendingMaintenance.toString(), 
-        icon: <AlertCircle size={24} className="text-amber-600" />, 
-        color: 'bg-amber-50' 
-      },
-      { 
-        label: 'Consumo Mensal', 
-        value: '1.250L', 
-        icon: <Fuel size={24} className="text-rose-600" />, 
-        color: 'bg-rose-50' 
-      },
-    ];
-  }, [vehicles, drivers, maintenances]);
-
-  const recentTrips = useMemo(() => trips.slice(0, 5), [trips]);
-  const recentMaintenances = useMemo(() => maintenances.slice(0, 3), [maintenances]);
+  const chartData = [
+    { name: 'Jan', Alunos: 320, Matrículas: 42, Professores: 12 },
+    { name: 'Fev', Alunos: 340, Matrículas: 52, Professores: 13 },
+    { name: 'Mar', Alunos: 360, Matrículas: 65, Professores: 14 },
+    { name: 'Abr', Alunos: 380, Matrículas: 72, Professores: 15 },
+    { name: 'Mai', Alunos: 400, Matrículas: 81, Professores: 16 },
+    { name: 'Jun', Alunos: 420, Matrículas: 95, Professores: 17 },
+  ];
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h2 className="text-4xl font-black text-gray-900 tracking-tight">Dashboard</h2>
-          <p className="text-gray-500 mt-2 font-medium flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            Visão geral do sistema em tempo real
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={handleDownloadReport}
-            className="px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
-          >
-            Baixar Relatório
-          </button>
-          <button 
-            onClick={handleOpenModal}
-            className="px-5 py-2.5 bg-blue-600 rounded-xl text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2 group"
-          >
-            <Plus size={18} className="transition-transform group-hover:rotate-90" />
-            Nova Viagem
-          </button>
+    <div className="space-y-10 pb-10">
+      <div className="rounded-2xl border border-slate-200/70 bg-white p-8 shadow-sm">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <SectionHeader
+            title={`Olá, ${user?.name?.split(' ')[0] || 'Administrador'}! 👋`}
+            description="Visão geral dos principais indicadores do sistema."
+          />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button variant="outline" className="h-12 rounded-2xl px-5 font-semibold">
+              <CalendarDays className="mr-2 h-4 w-4 text-slate-400" />
+              Maio 2026
+            </Button>
+            <Button className="h-12 rounded-2xl bg-primary text-white px-6 font-semibold gap-2 hover:bg-primary/90">
+              <TrendingUp size={18} />
+              Relatório Geral
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Modal de Nova Viagem */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Registrar Nova Viagem"
-        size="lg"
-      >
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Motorista</label>
-              <select
-                value={formData.motorista}
-                onChange={(e) => setFormData({ ...formData, motorista: e.target.value })}
-                className="w-full px-5 py-3.5 bg-gray-50 border border-transparent rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700 cursor-pointer"
-              >
-                <option value="">Selecionar Motorista</option>
-                {drivers.map(d => <option key={d.id} value={d.nome}>{d.nome}</option>)}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Veículo</label>
-              <select
-                value={formData.veiculo}
-                onChange={(e) => setFormData({ ...formData, veiculo: e.target.value })}
-                className="w-full px-5 py-3.5 bg-gray-50 border border-transparent rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700 cursor-pointer"
-              >
-                <option value="">Selecionar Veículo</option>
-                {vehicles.map(v => <option key={v.id} value={v.modelo}>{v.placa} - {v.modelo}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Origem</label>
-              <input
-                type="text"
-                value={formData.origem}
-                onChange={(e) => setFormData({ ...formData, origem: e.target.value })}
-                placeholder="Ex: Centro Luanda"
-                className="w-full px-5 py-3.5 bg-gray-50 border border-transparent rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Destino</label>
-              <input
-                type="text"
-                value={formData.destino}
-                onChange={(e) => setFormData({ ...formData, destino: e.target.value })}
-                placeholder="Ex: Viana"
-                className="w-full px-5 py-3.5 bg-gray-50 border border-transparent rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Distância</label>
-              <input
-                type="text"
-                value={formData.km}
-                onChange={(e) => setFormData({ ...formData, km: e.target.value })}
-                placeholder="Ex: 22 km"
-                className="w-full px-5 py-3.5 bg-gray-50 border border-transparent rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Combustível</label>
-              <input
-                type="text"
-                value={formData.combustivel}
-                onChange={(e) => setFormData({ ...formData, combustivel: e.target.value })}
-                placeholder="Ex: 15 L"
-                className="w-full px-5 py-3.5 bg-gray-50 border border-transparent rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Data</label>
-              <input
-                type="date"
-                value={formData.data}
-                onChange={(e) => setFormData({ ...formData, data: e.target.value })}
-                className="w-full px-5 py-3.5 bg-gray-50 border border-transparent rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all font-bold text-gray-700"
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-4 pt-6 border-t border-gray-50">
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="flex-1 px-8 py-4 bg-gray-50 text-gray-400 font-black rounded-2xl hover:bg-gray-100 transition-all uppercase text-xs tracking-widest"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 uppercase text-xs tracking-widest"
-            >
-              Registrar Viagem
-            </button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Toast de Notificação */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
-
-      {/* Cards de Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <StatCard 
-            key={stat.label}
-            label={stat.label}
-            value={stat.value}
-            icon={stat.icon}
-            color={stat.color}
-          />
+          <Card key={stat.label} className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-white border ${stat.border}`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                </div>
+                <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none">
+                  {stat.trend}
+                </Badge>
+              </div>
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-slate-400 mb-2">
+                {stat.label}
+              </p>
+              <div className="flex items-baseline gap-2">
+                <h2 className="text-3xl font-semibold text-slate-900">{stat.value}</h2>
+                <span className="text-xs font-medium text-slate-400">total</span>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* Mapa de Rastreamento - Agora maior e com destaque */}
-        <div className="xl:col-span-2 space-y-8">
-          <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-500">
-            <div className="p-8 border-b border-gray-50 flex items-center justify-between">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="lg:col-span-4 border-slate-200/60 shadow-xl shadow-slate-200/20 rounded-3xl overflow-hidden">
+          <CardHeader className="border-b border-slate-50 pb-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h3 className="text-xl font-black text-gray-900">Rastreamento em Tempo Real</h3>
-                <p className="text-sm text-gray-500 mt-1 font-medium">Localização atual da frota ativa</p>
+                <CardTitle className="text-xl font-bold">Crescimento Institucional</CardTitle>
+                <CardDescription className="text-slate-500">Evolução mensal de alunos, matrículas e professores.</CardDescription>
               </div>
-              <div className="flex -space-x-3">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-gray-100 flex items-center justify-center overflow-hidden">
-                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                  <span className="h-2 w-2 rounded-full bg-blue-500" /> Alunos
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" /> Matrículas
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <span className="h-2 w-2 rounded-full bg-slate-400" /> Professores
+                </span>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-8 px-2">
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorAlunos" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.2} />
+                    </linearGradient>
+                    <linearGradient id="colorMatriculas" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} 
+                    dy={15}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} 
+                  />
+                  <Tooltip 
+                    cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+                    contentStyle={{ 
+                      borderRadius: '16px', 
+                      border: 'none',
+                      boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+                      padding: '12px'
+                    }} 
+                  />
+                  <Legend 
+                    wrapperStyle={{ paddingTop: '20px' }}
+                    iconType="rect"
+                  />
+                  <Bar 
+                    dataKey="Alunos" 
+                    fill="url(#colorAlunos)" 
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1500}
+                  />
+                  <Bar 
+                    dataKey="Professores" 
+                    fill="#64748b" 
+                    radius={[4, 4, 0, 0]}
+                    animationDuration={1500}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="Matrículas" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    dot={{ fill: '#10b981', strokeWidth: 2, r: 6 }}
+                    activeDot={{ r: 8 }}
+                    animationDuration={2000}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-3 border border-slate-200/70 bg-white text-slate-900 shadow-sm rounded-3xl overflow-hidden">
+          <CardHeader className="border-b border-slate-200/70 pb-6">
+            <SectionHeader
+              title="Ações Rápidas"
+              description="Acesse funções importantes com clareza e rapidez."
+              titleClassName="text-slate-900"
+              descriptionClassName="text-slate-500"
+            />
+          </CardHeader>
+          <CardContent className="grid gap-3 pt-6">
+            {[
+              { label: 'Novo Aluno', desc: 'Registar novo estudante', icon: Users, color: 'bg-blue-500' },
+              { label: 'Lançar Notas', desc: 'Avaliações do período', icon: FileText, color: 'bg-amber-500' },
+              { label: 'Confirmar Pagamento', desc: 'Mensalidades e taxas', icon: DollarSign, color: 'bg-emerald-500' },
+              { label: 'Gerar Horário', desc: 'Calendário escolar', icon: CalendarDays, color: 'bg-indigo-500' },
+            ].map((action, idx) => (
+              <Button
+                key={idx}
+                variant="outline"
+                className="w-full justify-start rounded-2xl border-slate-200 bg-white px-4 py-4 text-left shadow-sm transition-colors hover:bg-slate-50"
+              >
+                <div className="flex items-center gap-4 w-full text-slate-900">
+                  <div className={`grid h-12 w-12 place-items-center rounded-2xl ${action.color} text-white`}>
+                    <action.icon className="h-5 w-5" />
                   </div>
-                ))}
-                <div className="w-10 h-10 rounded-full border-4 border-white bg-blue-50 flex items-center justify-center text-blue-600 text-[10px] font-black">
-                  +12
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold leading-none mb-1">{action.label}</p>
+                    <p className="text-xs text-slate-500 font-medium">{action.desc}</p>
+                  </div>
+                  <ArrowUpRight className="h-4 w-4 text-slate-400" />
                 </div>
-              </div>
-            </div>
-            <div className="h-[500px] relative">
-              <MapTracker />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <MaintenancePanel maintenances={recentMaintenances} />
-            <FuelPanel monthlyConsumption="1,250 L" monthlyCost="Kz 250,000" />
-          </div>
-        </div>
-
-        {/* Sidebar de conteúdo no Dashboard */}
-        <div className="space-y-8">
-          <VehiclesList vehicles={vehicles.slice(0, 4)} />
-          <DriversList drivers={drivers.slice(0, 6)} />
-        </div>
-      </div>
-
-      {/* Tabela de Viagens - Ocupando toda a largura no final */}
-      <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-500">
-        <div className="p-8 border-b border-gray-50 flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-black text-gray-900">Atividade Recente</h3>
-            <p className="text-sm text-gray-500 mt-1 font-medium">Últimas 5 viagens realizadas</p>
-          </div>
-          <button className="text-blue-600 font-bold text-sm hover:underline">Ver todas</button>
-        </div>
-        <RecentTripsTable trips={recentTrips} />
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -1,97 +1,104 @@
-import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Truck, Users, Navigation, Fuel, Wrench, FileText, Settings, Menu, X, LogOut, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { 
+  LayoutDashboard, Users, BookOpen, FilePlus, FileText, 
+  DollarSign, CalendarDays, BarChart3, Settings, UserCog,
+  ChevronRight
+} from 'lucide-react';
 import Navbar from './Navbar';
+import { ScrollArea } from './ui/scroll-area';
 
 const MainLayout = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const location = useLocation();
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   const navItems = [
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
-    { icon: <Truck size={20} />, label: 'Veículos', path: '/veiculos' },
-    { icon: <Users size={20} />, label: 'Motoristas', path: '/motoristas' },
-    { icon: <Navigation size={20} />, label: 'Viagens', path: '/viagens' },
-    { icon: <Fuel size={20} />, label: 'Combustível', path: '/combustivel' },
-    { icon: <Wrench size={20} />, label: 'Manutenção', path: '/manutencao' },
-    { icon: <FileText size={20} />, label: 'Relatórios', path: '/relatorios' },
+    { icon: <Users size={20} />, label: 'Alunos', path: '/students' },
+    { icon: <BookOpen size={20} />, label: 'Professores', path: '/teachers' },
+    { icon: <FilePlus size={20} />, label: 'Matrículas', path: '/enrollments' },
+    { icon: <FileText size={20} />, label: 'Notas', path: '/grades' },
+    { icon: <DollarSign size={20} />, label: 'Pagamentos', path: '/payments' },
+    { icon: <CalendarDays size={20} />, label: 'Horário', path: '/schedule' },
+    { icon: <BarChart3 size={20} />, label: 'Relatórios', path: '/reports' },
+    { icon: <UserCog size={20} />, label: 'Usuários', path: '/users' },
     { icon: <Settings size={20} />, label: 'Configurações', path: '/settings' },
   ];
 
-  return (
-    <div className="flex flex-col h-screen bg-[#F8FAFC]">
-      <Navbar />
-      
-      <div className="flex flex-1 overflow-hidden">
-        <aside className={`${isSidebarOpen ? 'w-72' : 'w-24'} bg-white shadow-sm transition-all duration-300 ease-in-out border-r border-gray-100 flex flex-col z-40`}>
-          <div className="p-6 flex items-center justify-between">
-            <h2 className={`${!isSidebarOpen && 'hidden'} font-bold text-[11px] text-gray-400 uppercase tracking-[0.2em]`}>Menu Principal</h2>
-            <button 
-              onClick={() => setSidebarOpen(!isSidebarOpen)} 
-              className="p-2 hover:bg-gray-50 rounded-xl transition-all text-gray-400 hover:text-blue-600 border border-transparent hover:border-gray-100"
-            >
-              {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
-          </div>
+  const allowedPaths = {
+    admin: navItems.map(item => item.path),
+    secretary: ['/', '/students', '/enrollments', '/payments', '/schedule', '/reports', '/users', '/settings'],
+    teacher: ['/', '/grades', '/schedule', '/students'],
+  };
 
-          <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
-            {navItems.map((item) => {
+  const userRole = user?.role || 'admin';
+  const filteredNav = navItems.filter((item) => allowedPaths[userRole]?.includes(item.path));
+
+  return (
+    <div className="flex h-screen bg-[#F8FAFC]">
+      {/* Sidebar */}
+      <aside className="w-72 bg-white border-r border-slate-200 hidden md:flex flex-col">
+        <div className="p-6 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary/20">
+              EG
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">EduGest</h1>
+              <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400">Sistema Escolar</p>
+            </div>
+          </div>
+        </div>
+
+        <ScrollArea className="flex-1 px-4 py-6">
+          <div className="space-y-1.5">
+            <p className="px-4 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">Menu Principal</p>
+            {filteredNav.map((item) => {
               const isActive = location.pathname === item.path;
               return (
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`
-                    flex items-center p-3.5 rounded-2xl transition-all duration-200 group relative
-                    ${isActive 
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' 
-                      : 'text-gray-500 hover:bg-gray-50 hover:text-blue-600'}
-                  `}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${
+                    isActive
+                      ? 'bg-primary text-white shadow-md shadow-primary/20 active:scale-[0.98]'
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-primary active:scale-[0.98]'
+                  }`}
                 >
-                  <div className={`flex items-center min-w-[24px] justify-center transition-transform duration-300 ${!isActive && 'group-hover:scale-110'}`}>
-                    {item.icon}
+                  <div className="flex items-center gap-3.5">
+                    <span className={`${isActive ? 'text-white' : 'text-slate-400 group-hover:text-primary'}`}>
+                      {item.icon}
+                    </span>
+                    <span className="text-sm font-semibold">{item.label}</span>
                   </div>
-                  <span className={`${!isSidebarOpen && 'hidden'} ml-4 font-bold text-sm tracking-tight`}>{item.label}</span>
-                  
-                  {isActive && isSidebarOpen && (
-                    <ChevronRight size={14} className="ml-auto opacity-70" />
-                  )}
-
-                  {!isSidebarOpen && (
-                    <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 font-bold tracking-wide">
-                      {item.label}
-                    </div>
-                  )}
+                  {isActive && <ChevronRight size={14} className="opacity-70" />}
                 </Link>
               );
             })}
-          </nav>
-
-          <div className="p-6 border-t border-gray-50">
-            <button
-              onClick={handleLogout}
-              className={`
-                flex items-center w-full p-4 rounded-2xl transition-all duration-200 group
-                ${isSidebarOpen ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'text-gray-400 hover:text-red-600 hover:bg-red-50'}
-              `}
-            >
-              <LogOut size={20} className="transition-transform group-hover:scale-110" />
-              <span className={`${!isSidebarOpen && 'hidden'} ml-4 font-bold text-sm tracking-tight`}>Terminar Sessão</span>
-            </button>
           </div>
-        </aside>
+        </ScrollArea>
 
-        <main className="flex-1 overflow-auto bg-[#F8FAFC] custom-scrollbar">
-          <div className="p-10">
-            <div className="max-w-[1600px] mx-auto">
+        <div className="p-4 border-t border-slate-100">
+          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
+                {user?.name?.charAt(0) || 'A'}
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-sm font-bold text-slate-900 truncate">{user?.name || 'Administrador'}</p>
+                <p className="text-xs text-slate-500 truncate capitalize">{userRole}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <Navbar />
+        <main className="flex-1 overflow-auto custom-scrollbar">
+          <div className="p-6 lg:p-10">
+            <div className="max-w-7xl mx-auto">
               <Outlet />
             </div>
           </div>
